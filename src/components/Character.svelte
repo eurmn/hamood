@@ -19,5 +19,5 @@
     style={`left: ${values[0]}%; top: ${values[1]}%;`}
     width={values[2] * 332}
     height={values[2] * 477}
-    src={`base/${values[3]}.png`}
+    src={`${base}/${values[3]}.png`}
 />
