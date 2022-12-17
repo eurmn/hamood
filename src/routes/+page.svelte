@@ -4,49 +4,76 @@
     import Character from "../components/Character.svelte";
     import { base } from "$app/paths";
 
-    let audio: HTMLAudioElement;
+    let audios: {
+        [key: string]: HTMLAudioElement;
+    } = {};
+
     let counter = 0;
 
-    let audios: { [key: string]: string[] } = {
-        hamood: [
-            "hamood",
-            "hamood-2",
-            "hamood-habibi-hamood",
-            "goumganmeninoma",
-            "goumganmeninoma-2",
-            "ye-amad-hamadi",
-        ],
-        ohmahgawd: ["ohmahgawd"],
+    let addHamood = () => {
+        let randomForMahGah = Math.floor(Math.random() * 1000);
+        let character = randomForMahGah == 0 ? "ohmahgawd" : "hamood";
+        let audio: HTMLAudioElement;
+        let width = Math.random() * 100 - 4;
+        let height = Math.random() * 100 - 10;
+        let scale = Math.random() * 0.6 + 0.1;
+
+        if (character == "ohmahgawd") {
+            audio = audios["ohmahgawd"];
+        } else {
+            let r =
+                Object.keys(audios)[
+                    Math.floor(Math.random() * (Object.keys(audios).length - 1))
+                ];
+            console.log(r);
+            audio = audios[r];
+        }
+
+        audio.play();
+        counter++;
+
+        new Character({
+            target: document.body,
+            props: {
+                width,
+                height,
+                scale,
+                character,
+                counter,
+            },
+        });
     };
 
-    let nextCharacter: string;
-    document.body.addEventListener("click", () => {
-        let randomForMahGah = Math.floor(Math.random() * 1000);
-        counter++;
-        console.log(counter);
-
-        let character = randomForMahGah == 0 ? "ohmahgawd" : "hamood";
-
-        audio.src =
-            base + "/audio/" +
-            audios[character][
-                Math.floor(Math.random() * audios[character].length)
-            ] +
-            ".mp3";
-        audio.play();
-        
-        nextCharacter = character;
+    document.body.addEventListener("click", addHamood);
+    document.addEventListener("keyup", (e) => {
+        if (e.code == "Space") {
+            addHamood();
+        }
     });
 </script>
 
-<div class="absolute top-1 right-1 text-white font-sans text-xl z-5">
+<div
+    class="absolute top-1 right-1 text-white font-sans text-xl bg-black px-2"
+    style={`z-index: ${counter + 1}`}
+>
     {counter}
 </div>
-{#each new Array(counter) as _}
-    {@const width = Math.random() * 100}
-    {@const height = Math.random() * 100}
-    {@const scale = Math.random() * 0.6 + 0.1}
-    {@const character = nextCharacter}
-    <Character {width} {height} {scale} {character} />
-{/each}
-<audio bind:this={audio} />
+<audio bind:this={audios["hamood"]} src={base + "/audio/hamood.mp3"} />
+<audio bind:this={audios["hamood-2"]} src={base + "/audio/hamood-2.mp3"} />
+<audio
+    bind:this={audios["hamood-habibi-hamood"]}
+    src={base + "/audio/hamood-habibi-hamood.mp3"}
+/>
+<audio
+    bind:this={audios["goumganmeninoma"]}
+    src={base + "/audio/goumganmeninoma.mp3"}
+/>
+<audio
+    bind:this={audios["goumganmeninoma-2"]}
+    src={base + "/audio/goumganmeninoma-2.mp3"}
+/>
+<audio
+    bind:this={audios["ye-amad-hamadi"]}
+    src={base + "/audio/ye-amad-hamadi.mp3"}
+/>
+<audio bind:this={audios["ohmahgawd"]} src={base + "/audio/secret.mp3"} />
